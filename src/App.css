@@ -5,3 +5,50 @@
 .bg-overlay{
     background:  linear-gradient(51.22deg, rgba(47, 140, 96, 0.63) -22.39%, rgba(0, 0, 0, 0.6237) 61.76%);
 }
+
+
+.sideBar-container .css-1wvake5{
+    border: none;
+}
+.sideBar-container .ps-sidebar-container{
+    background-color: rgba(31, 38, 62, 1);
+    color: #fff;
+    height: 100vh;
+    border-top-right-radius: 58px;
+}
+
+.sideBar-container .ps-sidebar-container .ps-menu-button:hover{
+    background-color: rgba(0, 146, 71, 0.1);
+}
+.asideLogoNotCollaps{
+    margin-left: 80px;
+    transition-duration: 800ms;
+}
+.asideLogoCollaps{
+    transition-duration: 550ms;
+}
+
+.navBorder{
+    border-radius: 16px;
+}
+
+.headerContainer{
+    width: 100%;
+    height: 100%;
+    background-image: url(assets/images/headerBg.png);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    border-radius: 30px
+}
+
+
+.notFoundContainer{
+    background-image: url(assets/images/not-found-bg.png);
+    height: 100vh;
+    width: 100%;
+    /*height: 100%; */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: right;
+}

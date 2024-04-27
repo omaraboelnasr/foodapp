@@ -24,12 +24,12 @@ const Login = ({saveLoginData}) => {
         <ToastContainer />
         <div className="auth-container">
             <div className="container-fluid vh-100 bg-overlay">
-                <div className="row vh-100 justify-content-center align-items-center ">
-                    <div className="col-md-6 bg-white p-4 rounded-4 ">
+                <div className="row vh-100 justify-content-center align-items-center">
+                    <div className="col-md-6 bg-white p-4 pb-5 rounded-4 ">
                         <div className='text-center'>
                             <img src={logo} alt="" className='w-50' />
                         </div>
-                        <div className='form-content w-75 mx-auto'>
+                        <div className='form-content mx-3'>
                             <h3>Log In</h3>
                             <p className='text-muted'>Welcome Back! Please enter your details</p>
                             <form onSubmit={handleSubmit(onSubmit)}>

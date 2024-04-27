@@ -32,7 +32,7 @@ const ResetPass = () => {
                         <div className='text-center'>
                             <img src={logo} alt="" className='w-50' />
                         </div>
-                        <div className='form-content w-75 mx-auto'>
+                        <div className='form-content mx-3'>
                             <h3> Reset Password</h3>
                             <p className='text-muted'>Please Enter Your Otp  or Check Your Inbox</p>
                             <form onSubmit={handleSubmit(onSubmit)} className=' pt-4 pb-5'>
@@ -47,7 +47,7 @@ const ResetPass = () => {
                                 })} />
                             </div>
                             {errors.email && <p className='alert alert-danger'>{errors.email.message}</p>}
-                            <div className="input-group mb-3">
+                            <div className="input-group">
                                 <span className="input-group-text" id="basic-addon1"><i className="fa fa-key"></i></span>
                                 <input type="text" className="form-control" placeholder="OTP" {...register("seed" ,{
                                     required:"otp is required",
@@ -83,7 +83,7 @@ const ResetPass = () => {
                                 </div>
                             </div>
                             {errors.confirmPassword && <p className='alert alert-danger'>{errors.confirmPassword.message}</p>}
-                            <button className='btn btn-success w-100'>Reset Password</button>
+                            <button className='btn btn-success w-100 mt-4'>Reset Password</button>
                             </form>
                         </div>
                     </div>

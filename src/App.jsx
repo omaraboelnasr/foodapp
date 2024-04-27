@@ -14,6 +14,7 @@ import './App.css'
 import { useEffect, useState } from "react"
 import { jwtDecode } from "jwt-decode"
 import ProtectedRoute from "./modules/SharedModule/protectedRoute/ProtectedRoute"
+import UserProtected from "./modules/SharedModule/components/userProtected/UserProtected"
 function App() {
   let [loginData,setLoginData]=useState(null)
   let saveLoginData = ()=>{
@@ -43,8 +44,16 @@ function App() {
     {
       path:'/',element:<AuthLayout/>,errorElement:<NotFound/>,
       children:[
-        {index:true,element:<Login saveLoginData={saveLoginData}/>},
-        {path:"login",element:<Login saveLoginData={saveLoginData}/>},
+        {index:true,element:
+        <UserProtected>
+        <Login saveLoginData={saveLoginData}/>
+        </UserProtected>
+      },
+        {path:"login",element:
+        <UserProtected>
+        <Login saveLoginData={saveLoginData}/>
+        </UserProtected>
+      },
         {path:"register",element:<Register/>},
         {path:"ForgetPass",element:<ForgetPass/>},
         {path:"ResetPass",element:<ResetPass/>},

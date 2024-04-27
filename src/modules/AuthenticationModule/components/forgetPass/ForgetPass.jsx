@@ -26,11 +26,11 @@ const ForgetPass = () => {
                         <div className='text-center'>
                             <img src={logo} alt="" className='w-50' />
                         </div>
-                        <div className='form-content w-75 mx-auto'>
+                        <div className='form-content mx-3 pt-3'>
                             <h3>Forgot Your Password?</h3>
                             <p className='text-muted'>No worries! Please enter your email and we will send a password reset link </p>
                             <form onSubmit={handleSubmit(onSubmit)} className=' pt-4 pb-5'>
-                            <div className="input-group pb-3">
+                            <div className="input-group pb-5">
                                 <span className="input-group-text" id="basic-addon1"><i className="fa fa-envelope"></i></span>
                                 <input type="text" className="form-control" placeholder="Enter your E-mail" {...register("email" ,{
                                     required:"Email is required",

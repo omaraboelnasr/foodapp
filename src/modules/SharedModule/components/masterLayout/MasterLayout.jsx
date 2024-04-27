@@ -1,25 +1,19 @@
 import { Outlet } from "react-router-dom";
-import Sidebar from "../sidebar/Sidebar";
+import SideBar from "../sidebar/Sidebar";
 import Navbar from "../navbar/Navbar";
-import Header from "../header/header";
 
 const MasterLayout = ({loginData}) => {
     return (
-        <div className="container">
-            <div className="row">
-                <div className="col-md-3">
+        <div className="d-flex ">
                     <div>
-                        <Sidebar/>
+                        <SideBar/>
                     </div>
-                </div>
-                <div className="col-md-9">
-                    <div>
+                    <div className="w-100 ms-3 me-3 mt-4">
                         <Navbar  loginData={loginData} />
-                        <Header/>
-                        <Outlet/>
+                        <div className="mt-4">
+                            <Outlet/>
+                        </div>
                     </div>
-                </div>
-            </div>
         </div>
     );
 }
