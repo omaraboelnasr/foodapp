@@ -15,6 +15,8 @@ import { useEffect, useState } from "react"
 import { jwtDecode } from "jwt-decode"
 import ProtectedRoute from "./modules/SharedModule/protectedRoute/ProtectedRoute"
 import UserProtected from "./modules/SharedModule/components/userProtected/UserProtected"
+import { ToastContainer } from "react-toastify"
+import RecipeData from "./modules/RecipesModule/components/recipeData/RecipeData"
 function App() {
   let [loginData,setLoginData]=useState(null)
   let saveLoginData = ()=>{
@@ -37,6 +39,7 @@ function App() {
       children:[
         {index:true,element:<Dashboard/>},
         {path:"recipes",element:<RecipesList/>},
+        {path:"recipeData",element:<RecipeData/>},
         {path:"categories",element:<CategoriesList/>},
         {path:"users",element:<UsersList/>},
       ]
@@ -63,6 +66,7 @@ function App() {
   return (
     <>
       <RouterProvider router={routes}></RouterProvider>
+      <ToastContainer />
     </>
   )
 }

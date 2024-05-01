@@ -15,13 +15,13 @@ const SideBar = () => {
     }
     return (
         <>
-        <div className="sideBar-container">
+        <div className="sideBar-container position-sticky top-0">
             <Sidebar collapsed={collaps}>
                 <Menu className="mt-5">
                     <div className={!collaps?'asideLogoNotCollaps':'asideLogoCollaps'}>
-                        <MenuItem icon={<img src={SideBarLogo} alt=""/>} onClick={handleCollaps}> </MenuItem>
+                        <MenuItem icon={<img src={SideBarLogo} alt=""/>} onClick={handleCollaps} className="sideBarLogo"> </MenuItem>
                     </div>
-                    <MenuItem className="mt-5" icon={<i className="fa fa-house"></i>} component={<Link to="/dashboard"/>}> Home </MenuItem>
+                    <MenuItem className="mt-5" icon={<i className="fa fa-house"></i>} component={<Link to="/dashboard"/>} > Home </MenuItem>
                     <MenuItem icon={<i className="fa fa-user-group"></i>} component={<Link to="/dashboard/users"/>}> Users </MenuItem>
                     <MenuItem icon={<i className="fa fa-table-cells-large"></i>} component={<Link to="/dashboard/recipes"/>}> Recipes </MenuItem>
                     <MenuItem icon={<i className="fa fa-layer-group"></i>} component={<Link to="/dashboard/categories"/>}> Categories </MenuItem>

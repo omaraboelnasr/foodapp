@@ -14,7 +14,8 @@ const ResetPass = () => {
     const onSubmit = async (data)=>{
         try{
             let response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Reset',data)
-            navigate('/login')
+            toast.success('Reset your password success',{hideProgressBar: true,position: "top-center",})
+                navigate('/login')
         }catch(error){
             toast.error(error.response.data.message)
         }

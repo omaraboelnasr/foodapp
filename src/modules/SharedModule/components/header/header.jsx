@@ -13,7 +13,7 @@ const Header = ({title,description,imgUrl}) => {
                 </div>
                 <div className="col-md-4">
                     <div className="headerImg text-center">
-                        <img src={imgUrl} alt=""/>
+                        <img src={imgUrl} alt="" className="img-fluid"/>
                     </div>
                 </div>
             </div>

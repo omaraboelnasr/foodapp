@@ -4,8 +4,8 @@ import Navbar from "../navbar/Navbar";
 
 const MasterLayout = ({loginData}) => {
     return (
-        <div className="d-flex ">
-                    <div>
+        <div className="d-flex">
+                    <div >
                         <SideBar/>
                     </div>
                     <div className="w-100 ms-3 me-3 mt-4">

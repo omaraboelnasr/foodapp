@@ -11,7 +11,9 @@ const ForgetPass = () => {
     const onSubmit = async (data)=>{
         try{
             let response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Reset/Request',data)
-            navigate('/ResetPass')
+            toast.success('Link send to your E-mail',{hideProgressBar: true,position: "top-center",})
+                navigate('/ResetPass')
+            
         }catch(error){
             toast.error(error.response.data.message)
         }

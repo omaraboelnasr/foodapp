@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import logo from '../../../../assets/images/logo.png'
 import axios from 'axios';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
   
 const Login = ({saveLoginData}) => {
@@ -11,17 +11,16 @@ const Login = ({saveLoginData}) => {
     const onSubmit = async (data)=>{
         try{
             let response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Login',data)
-            // toast.success('Login success',{hideProgressBar: true})
-            localStorage.setItem("token", response.data.token);
-            saveLoginData()
-            navigate('/dashboard')
+            toast.success('Login success',{position: "top-center",})
+                localStorage.setItem("token", response.data.token);
+                saveLoginData()
+                navigate('/dashboard')
         }catch(error){
             toast.error(error.response.data.message)
         }
     }
     return (
         <>
-        <ToastContainer />
         <div className="auth-container">
             <div className="container-fluid vh-100 bg-overlay">
                 <div className="row vh-100 justify-content-center align-items-center">
