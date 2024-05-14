@@ -1,25 +1,47 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
-import { FileUploader } from "react-drag-drop-files";
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import RecipesListHeader from '../../../SharedModule/components/recipesListHeader/RecipesListHeader';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { FileUploader } from "react-drag-drop-files";
 import { AuthContext } from '../../../../context/AuthContext';
 import { ToastContext } from '../../../../context/ToastContext';
 
-const RecipeData = () => {
+const RecipeUpdate = () => {
     const { getToastValue } = useContext(ToastContext)
     const { baseUrl, requestHeader } = useContext(AuthContext)
-    let { register, handleSubmit, formState: { errors } } = useForm()
+    const { id } = useParams();
+    let { register, handleSubmit, setValue, formState: { errors } } = useForm()
     const fileTypes = ["JPG", "PNG", "GIF"];
+    const [recipeData, setrecipeData] = useState([])
     const [file, setFile] = useState(null);
     const [categorieList, setcategorieList] = useState([])
     const [tagList, settagList] = useState([])
+    const [selectedCategory, setselectedCategory] = useState(null)
+    const [selectedTag, setselectedTag] = useState(null)
+    const [image, setImage] = useState(null);
+
     const navigate = useNavigate()
-    const handleChange = (file) => {
-        setFile(file);
-    };
+
+
+
+    const getRecipe = async () => {
+        try {
+            let response = await axios.get(
+                `${baseUrl}/Recipe/${id}`,
+                {
+                    headers: requestHeader
+                })
+            setrecipeData(response.data)
+            setselectedCategory(response.data.category[0])
+            setselectedTag(response.data.tag)
+            setImage(response.data.imagePath)
+            console.log(recipeData);
+        } catch (error) {
+            getToastValue('error', error.response.data.message)
+        }
+    }
+
     const getCategoryList = async () => {
         try {
             let response = await axios.get(
@@ -56,27 +78,54 @@ const RecipeData = () => {
         formData.append('recipeImage', file)
         return formData
     }
+
+
     const onSubmit = async (data) => {
         let recipeFormData = appendToFormData(data)
         try {
-            let response = await axios.post(
-                `${baseUrl}/Recipe`, recipeFormData,
+            // let imageResponse = ''
+            // if (file === null) {
+            //     imageResponse = await axios.get(
+            //         `https://upskilling-egypt.com:3006/${recipeData.imagePath}`,
+            //         { responseType: 'blob' }
+            //     )
+            // }
+            // const imageBlob = await imageResponse.data
+            // console.log(imageBlob);
+            // console.log(recipeFormData);
+            // const response = await axios.put(
+            //     `${baseUrl}/Recipe/${recipeData.id}`, {
+            //         recipeImage: imageBlob
+            //     },
+            //     {
+            //         headers: requestHeader
+            //     },
+            //     )
+
+            let responses = await axios.put(
+                `${baseUrl}/Recipe/${id}`, recipeFormData,
                 {
                     headers: requestHeader
                 })
-            getToastValue('success', 'Recipe Add Success')
+            getToastValue('success', 'Recipe Updated Success')
             navigate('/dashboard/recipes')
         } catch (error) {
             getToastValue('error', error.response.data.message)
         }
     }
 
+
     const handleCancle = () => {
         navigate('/dashboard/recipes')
     }
+    const handleChange = (file) => {
+        setFile(file);
+    };
     useEffect(() => {
+        getRecipe()
         getCategoryList()
         getTagList()
+        handleChange()
     }, [])
     return (
         <>
@@ -88,15 +137,17 @@ const RecipeData = () => {
                             required: "Recipe Name is required",
                         })} />
                     </div>
+                    {setValue('name', recipeData.name)}
                     {errors.name && <p className='alert alert-danger'>{errors.name.message}</p>}
 
                     <select className="form-select mb-3" {...register("tagId", {
                         required: "Tag name is required",
                     })} >
-                        <option selected disabled>Select Tag</option>
+                        <option selected value={selectedTag?.id}>{selectedTag?.name}</option>
                         {tagList.map((tag) =>
                             <option key={tag.id} value={tag.id}>{tag.name}</option>
                         )}
+                        {setValue('tagId', selectedTag?.id)}
                     </select>
                     {errors.tagId && <p className='alert alert-danger'>{errors.tagId.message}</p>}
 
@@ -110,16 +161,18 @@ const RecipeData = () => {
                         })} />
                         <span className="input-group-text">EGP</span>
                     </div>
+                    {setValue('price', recipeData.price)}
                     {errors.price && <p className='alert alert-danger'>{errors.price.message}</p>}
 
                     <select className="form-select mb-3" {...register("categoriesIds", {
                         required: "Category name is required",
                     })} >
-                        <option selected disabled>Select Category</option>
+                        <option selected value={selectedCategory?.id}>{selectedCategory?.name}</option>
                         {categorieList.map((category) =>
                             <option key={category.id} value={category.id}>{category.name}</option>
                         )}
                     </select>
+                    {setValue('categoriesIds', selectedCategory?.id)}
                     {errors.categoriesIds && <p className='alert alert-danger'>{errors.categoriesIds.message}</p>}
 
                     <div className="input-group mb-3">
@@ -127,19 +180,23 @@ const RecipeData = () => {
                             required: "Recipe description is required",
                         })} />
                     </div>
+                    {setValue('description', recipeData.description)}
                     {errors.description && <p className='alert alert-danger'>{errors.description.message}</p>}
+                    <div className='text-center mb-3'>
+                        <img src={`https://upskilling-egypt.com:3006/${image}`} alt="" width={'350px'} />
+                    </div>
                     <div className='fileUploadBox mb-3'>
-                        <FileUploader handleChange={handleChange} name="recipeImage" types={fileTypes} {...register("recipeImage")} />
+                        <FileUploader handleChange={handleChange} name="recipeImage" types={fileTypes}  {...register("recipeImage")} />
                     </div>
                     <div className='d-flex justify-content-end'>
                         <button className='btn btn-outline-success px-5 mx-4' onClick={handleCancle}>Cancle</button>
-                        <button className='btn btn-success px-5'>Save</button>
+                        <button className='btn btn-success px-5'>Update</button>
                     </div>
-
                 </form>
             </div>
         </>
+
     );
 }
 
-export default RecipeData;
+export default RecipeUpdate;

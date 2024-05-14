@@ -1,7 +1,7 @@
 import Header from "../../../SharedModule/components/header/header";
 import headerImage2 from '../../../../assets/images/header.png'
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import NoData from "../../../SharedModule/components/noData/NoData";
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
@@ -9,12 +9,18 @@ import { useForm } from 'react-hook-form';
 import 'react-toastify/dist/ReactToastify.css';
 import { toast } from "react-toastify";
 import DeleteData from "../../../SharedModule/components/deleteData/DeleteData";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../../context/AuthContext";
+import { ToastContext } from "../../../../context/ToastContext";
 
 const CategoriesList = () => {
+  const {getToastValue}=useContext(ToastContext)
+    const {loginData,baseUrl,requestHeader}=useContext(AuthContext)
     const [categorieList,setcategorieList]=useState([])
     const [show, setShow] = useState(false);
     const [categoryId , setcategoryId] = useState('')
     const [updatedCategory,setupdatedCategory] = useState('')
+    const navigate = useNavigate()
     const handleClose = () => {
       setupdatedCategory('')
       setShow(false)
@@ -22,6 +28,10 @@ const CategoriesList = () => {
     const handleShow = () => setShow(true);
     const [mode,setMode] = useState('')
     const [showDelete, setShowDelete] = useState(false);
+    const [arrayOfPages, setarrayOfPages] = useState([])
+    const [totalPages, setTotalPages] = useState(null)
+    const [currentPage , setcurrentPage]=useState(null)
+    const [searchCtegoryName,setsearchCtegoryName]=useState('')
     const handleCloseDelete = () => setShowDelete(false);
     const handleShowDelete = (id) =>{
       setShowDelete(true);
@@ -29,59 +39,63 @@ const CategoriesList = () => {
     } 
     let {register,handleSubmit,setValue,formState:{errors},reset}= useForm()
 
-    const getCategoriesList = async ()=>{
+    const getCategoriesList = async (name, pageSize, pageNumber)=>{
       try{
         let response = await axios.get(
-          'https://upskilling-egypt.com:3006/api/v1/Category/?pageSize=10&pageNumber=1',
+          `${baseUrl}/Category/?pageSize=${pageSize}&pageNumber=${pageNumber}`,
           {
-            headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+            headers:requestHeader,
+            params:{
+              name
+            }
           })
           setcategorieList(response.data.data)
-          
+          setarrayOfPages(Array(response.data.totalNumberOfPages).fill().map((_, i) => i + 1))
+          setTotalPages(response.data.totalNumberOfPages)
       }catch(error){
-        toast.error(error.response.data.message);
+        getToastValue('error',error.response.data.message)
       }
     }
     
     const onSubmit = async (data)=>{
       if(mode==='add'){
         try{
-          let response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Category/',data,{
-            headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+          let response = await axios.post(`${baseUrl}/Category/`,data,{
+            headers:requestHeader
           })
-          toast.success('Category Add Success',{position: "top-center",})
+          getToastValue('success','Category Add Success')
           reset()
           handleClose()
-          getCategoriesList()
+          getCategoriesList('',10)
       }catch(error){
-          toast.error(error.response.data.message)
+        getToastValue('error',error.response.data.message)
       }
       }else{
         try{
-          let response = await axios.put(`https://upskilling-egypt.com:3006/api/v1/Category/${categoryId}`,data,{
-            headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+          let response = await axios.put(`${baseUrl}/Category/${categoryId}`,data,{
+            headers:requestHeader
           })
-          toast.success('Category Updated Success',{position: "top-center",})
+          getToastValue('success','Category Updated Success')
           reset()
           handleClose()
-          getCategoriesList()
+          getCategoriesList('',10)
           setupdatedCategory('')
       }catch(error){
-          toast.error(error.response.data.message)
+        getToastValue('error',error.response.data.message)
       }
       }
         
     }
     const handleDeleteCategory = async ()=>{
       try{
-        let response = await axios.delete(`https://upskilling-egypt.com:3006/api/v1/Category/${categoryId}`,{
-          headers:{Authorization:`Bearer ${localStorage.getItem('token')}`}
+        let response = await axios.delete(`${baseUrl}/Category/${categoryId}`,{
+          headers:requestHeader
         })
-        toast.success('Category Deleted Success',{position: "top-center",})
+        getToastValue('success','Category Deleted Success')
         handleCloseDelete()
-        getCategoriesList()
+        getCategoriesList('',10)
     }catch(error){
-        toast.error(error.response.data.message)
+        getToastValue('error',error.response.data.message)
     }
     }
 
@@ -97,8 +111,36 @@ const CategoriesList = () => {
       setcategoryId(id)
       handleShow()
     }
+    const handleSearchByName = (e) => {
+      setsearchCtegoryName(e.target.value)
+      getCategoriesList(e.target.value,10)
+  }
+
+  const handlePagination = (page)=>{
+    setcurrentPage(page)
+    getCategoriesList(searchCtegoryName, 10, page)
+}
+
+const handleNextPage = ()=>{
+    if(currentPage < totalPages){
+      getCategoriesList(searchCtegoryName, 10, currentPage+1)
+        setcurrentPage(currentPage+1)
+    }
+}
+
+const handlePrevPage = ()=>{
+    if(currentPage != 1){
+      getCategoriesList(searchCtegoryName, 10, currentPage-1)
+        setcurrentPage(currentPage-1)
+    }
+}
+
     useEffect(()=>{
-      getCategoriesList()
+      if(loginData?.userGroup!=='SuperAdmin'){
+        return navigate('/dashboard')
+    }
+      setcurrentPage(1)
+      getCategoriesList('',10)
     },[updatedCategory,mode])
   return (
     <>
@@ -146,7 +188,14 @@ const CategoriesList = () => {
             <button className="btn btn-success p-3 w-100" onClick={handelAddCategory}>Add New Category</button>
           </div>
         </div>
-        {categorieList.length > 0?<table className="table">
+        <div className="row justify-content-center my-2">
+                    <div className="col-md-12">
+                        <div className="input-group mb-3">
+                            <input type="text" className="form-control" placeholder="Search by category name" aria-describedby="basic-addon1" onChange={handleSearchByName} />
+                        </div>
+                    </div>
+                </div>
+        {categorieList.length > 0?<><table className="table">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -168,7 +217,27 @@ const CategoriesList = () => {
             </tr>)
             }
           </tbody>
-        </table>:<NoData/>}
+        </table>
+        <nav aria-label="Page navigation example">
+                            <ul className="pagination justify-content-center">
+                                <li className="page-item">
+                                    <a className="page-link pointerClass" onClick={handlePrevPage} aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                {arrayOfPages.map((pg)=><>
+                                    <li className={`page-item ${currentPage==pg?'active':''}`}><a className="page-link pointerClass" onClick={()=>handlePagination(pg)}>{pg}</a></li>
+                                </>
+                                )}
+                                <li className="page-item">
+                                    <a className="page-link pointerClass" onClick={handleNextPage} aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+        </>
+        :<NoData/>}
       </div>
     </>
 

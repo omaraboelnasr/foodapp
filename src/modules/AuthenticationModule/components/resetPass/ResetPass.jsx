@@ -2,30 +2,38 @@ import { useForm } from 'react-hook-form';
 import logo from '../../../../assets/images/logo.png'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '../../../../context/AuthContext';
+import { ToastContext } from '../../../../context/ToastContext';
 
 const ResetPass = () => {
+    const {getToastValue}=useContext(ToastContext)
+    const {baseUrl}=useContext(AuthContext)
     const navigate = useNavigate()
     let {register,handleSubmit,watch,formState:{errors}}= useForm()
-    const [showPassword,setShowPassword]=useState(false)
-    
-    const onSubmit = async (data)=>{
+    const [showNewPassword,setShowNewPassword]=useState(false)
+    const [showConfirmPassword,setshowConfirmPassword]=useState(false)
+
+        const onSubmit = async (data)=>{
         try{
-            let response = await axios.post('https://upskilling-egypt.com:3006/api/v1/Users/Reset',data)
-            toast.success('Reset your password success',{hideProgressBar: true,position: "top-center",})
+            let response = await axios.post(`${baseUrl}/Users/Reset`,data)
+            getToastValue('success','Reset your password success')
                 navigate('/login')
         }catch(error){
-            toast.error(error.response.data.message)
+            getToastValue('error',error.response.data.message)
         }
     }
-    const handleShowPassword=()=>{
-        setShowPassword(!showPassword)
+    const handleShowNewPassword=()=>{
+        setShowNewPassword(!showNewPassword)
+    }
+
+    const handleShowConfirmPassword=()=>{
+        setshowConfirmPassword(!showConfirmPassword)
     }
     return (
         <>  
-        <ToastContainer />
         <div className="auth-container">
             <div className="container-fluid vh-100 bg-overlay">
                 <div className="row vh-100 justify-content-center align-items-center ">
@@ -34,7 +42,7 @@ const ResetPass = () => {
                             <img src={logo} alt="" className='w-50' />
                         </div>
                         <div className='form-content mx-3'>
-                            <h3> Reset Password</h3>
+                            <h3>Reset Password</h3>
                             <p className='text-muted'>Please Enter Your Otp  or Check Your Inbox</p>
                             <form onSubmit={handleSubmit(onSubmit)} className=' pt-4 pb-5'>
                             <div className="input-group pb-3">
@@ -48,7 +56,7 @@ const ResetPass = () => {
                                 })} />
                             </div>
                             {errors.email && <p className='alert alert-danger'>{errors.email.message}</p>}
-                            <div className="input-group">
+                            <div className="input-group mb-3">
                                 <span className="input-group-text" id="basic-addon1"><i className="fa fa-key"></i></span>
                                 <input type="text" className="form-control" placeholder="OTP" {...register("seed" ,{
                                     required:"otp is required",
@@ -58,7 +66,7 @@ const ResetPass = () => {
                             
                             <div className="input-group mb-3 position-relative">
                                 <span className="input-group-text" id="basic-addon1"><i className="fa fa-key"></i></span>
-                                <input type={showPassword?'text':'password'} className="form-control" placeholder="New Password" {...register("password" ,{
+                                <input type={showNewPassword?'text':'password'} className="form-control z-0" placeholder="New Password" {...register("password" ,{
                                     required:"Password is required",
                                     pattern:{
                                         value:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?]).{6,}$/g,
@@ -66,21 +74,21 @@ const ResetPass = () => {
                                     }
                                 })}/>
                                 <div className='position-absolute end-0 px-2 py-2'>
-                                <span onClick={()=>handleShowPassword()}>{showPassword?<i className="fa-regular fa-eye"></i>:<i className="fa-regular fa-eye-slash"></i>}</span>
+                                <span onClick={handleShowNewPassword}>{showNewPassword?<i className="fa-regular fa-eye"></i>:<i className="fa-regular fa-eye-slash"></i>}</span>
                                 </div>
                             </div>
                             {errors.password && <p className='alert alert-danger'>{errors.password.message}</p>}
                             
                             <div className="input-group mb-3 position-relative">
                                 <span className="input-group-text" id="basic-addon1"><i className="fa fa-key"></i></span>
-                                <input type={showPassword?'text':'password'} className="form-control" placeholder="Confirm New Password" {...register("confirmPassword" ,{
+                                <input type={showConfirmPassword?'text':'password'} className="form-control z-0" placeholder="Confirm New Password" {...register("confirmPassword" ,{
                                     required:"Confirm Password is required",
                                     validate: (value) =>
 												value === watch("password") ||
 												"Passwords do not match",
                                 })}/>
                                 <div className='position-absolute end-0 px-2 py-2'>
-                                <span onClick={()=>handleShowPassword()}>{showPassword?<i className="fa-regular fa-eye"></i>:<i className="fa-regular fa-eye-slash"></i>}</span>
+                                <span onClick={handleShowConfirmPassword}>{showConfirmPassword?<i className="fa-regular fa-eye"></i>:<i className="fa-regular fa-eye-slash"></i>}</span>
                                 </div>
                             </div>
                             {errors.confirmPassword && <p className='alert alert-danger'>{errors.confirmPassword.message}</p>}

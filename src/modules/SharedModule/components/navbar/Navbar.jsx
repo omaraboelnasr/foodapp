@@ -1,7 +1,11 @@
+import { useContext } from 'react';
 import ProfileImg from '../../../../assets/images/avatar.png'
+import { AuthContext } from '../../../../context/AuthContext';
 
 
-const Navbar = ({loginData}) => {
+const Navbar = () => {
+    let {loginData}=useContext(AuthContext)
+
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary navBorder">
             <div className="container-fluid">

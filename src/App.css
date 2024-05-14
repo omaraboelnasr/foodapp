@@ -90,7 +90,14 @@
 .recipesHeader{
     background-color: rgba(240, 255, 239, 1);
     border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+}
+
+.favHeart{
+    color: #eb0909;
+    font-size: 30px;
+}
+
+.favHeart:hover{
+    color: #a62828;
+    cursor: pointer;
 }

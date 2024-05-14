@@ -11,37 +11,30 @@ import Register from "./modules/AuthenticationModule/components/register/Registe
 import ForgetPass from "./modules/AuthenticationModule/components/forgetPass/ForgetPass"
 import ResetPass from "./modules/AuthenticationModule/components/resetPass/ResetPass"
 import './App.css'
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { jwtDecode } from "jwt-decode"
 import ProtectedRoute from "./modules/SharedModule/protectedRoute/ProtectedRoute"
 import UserProtected from "./modules/SharedModule/components/userProtected/UserProtected"
 import { ToastContainer } from "react-toastify"
 import RecipeData from "./modules/RecipesModule/components/recipeData/RecipeData"
+import RecipeUpdate from "./modules/RecipesModule/components/recipeUpdate/RecipeUpdate"
+import VerificationCode from "./modules/AuthenticationModule/components/verificationCode/verificationCode"
+import FavoriteList from "./modules/FavoriteModule/components/favoriteList/FavoriteList"
 function App() {
-  let [loginData,setLoginData]=useState(null)
-  let saveLoginData = ()=>{
-    let encodedToken = localStorage.getItem('token')
-    let decodedToken = jwtDecode(encodedToken)
-    setLoginData(decodedToken)
-    // console.log(loginData);
-  }
-  useEffect(()=>{
-    if(localStorage.getItem('token')){
-      saveLoginData()
-    }
-  },[])
   let routes = createBrowserRouter([
     {
       path:'dashboard',
-      element:<ProtectedRoute loginData={loginData}>
-        <MasterLayout loginData={loginData}/>
+      element:<ProtectedRoute>
+        <MasterLayout/>
         </ProtectedRoute>,errorElement:<NotFound/>,
       children:[
         {index:true,element:<Dashboard/>},
         {path:"recipes",element:<RecipesList/>},
         {path:"recipeData",element:<RecipeData/>},
+        {path:"updateRecipe/:id",element:<RecipeUpdate/>},
         {path:"categories",element:<CategoriesList/>},
         {path:"users",element:<UsersList/>},
+        {path:"favorite",element:<FavoriteList/>},
       ]
     },
     {
@@ -49,17 +42,18 @@ function App() {
       children:[
         {index:true,element:
         <UserProtected>
-        <Login saveLoginData={saveLoginData}/>
+        <Login/>
         </UserProtected>
       },
         {path:"login",element:
         <UserProtected>
-        <Login saveLoginData={saveLoginData}/>
+        <Login/>
         </UserProtected>
       },
         {path:"register",element:<Register/>},
         {path:"ForgetPass",element:<ForgetPass/>},
         {path:"ResetPass",element:<ResetPass/>},
+        {path:"verification",element:<VerificationCode/>},
       ]
     }
   ])
